@@ -46,9 +46,9 @@ formatter run, or dependency bump can be title-only; do not invent significance 
 
 ## Scopes
 
-Code changes use the Cargo package name, `datafusion-functions-vector`, including tests of that crate.
-Inspect the manifest if the repository later becomes a workspace; select the crate with the principal
-impact. Do not substitute a file name or invent a Python package layer.
+Code changes use the Cargo package name of the changed package, including its tests; the workspace
+members are listed in the root `Cargo.toml`. When a change spans packages, select the one with the
+principal impact. Do not substitute a file name or invent a Python package layer.
 
 Non-code changes use the area:
 

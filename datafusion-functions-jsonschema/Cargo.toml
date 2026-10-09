@@ -1,0 +1,30 @@
+[package]
+name = "datafusion-functions-jsonschema"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "JSON Schema validation scalar UDFs for Apache DataFusion"
+license.workspace = true
+repository.workspace = true
+keywords = ["datafusion", "jsonschema", "json", "sql", "validation"]
+categories = ["database-implementations", "encoding"]
+
+[dependencies]
+datafusion = { version = "55", default-features = false }
+jsonschema = { version = "0.58", default-features = false }
+lru = "0.18"
+serde_json = "1"
+thiserror = "2"
+
+[dev-dependencies]
+# Struct field access such as `jsonschema_errors(...)['errors']` needs nested_expressions
+datafusion = { version = "55", default-features = false, features = ["nested_expressions", "sql"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+
+[lints.rust]
+missing_docs = "warn"
+
+[lints.clippy]
+dbg_macro = "deny"
+print_stdout = "deny"
+pedantic = { level = "deny", priority = -1 }

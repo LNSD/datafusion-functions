@@ -12,8 +12,11 @@
 
 A Rust workspace for [Apache DataFusion](https://datafusion.apache.org/) extension functions.
 
-The `datafusion-functions-vector` package at the workspace root currently contains the standard
-`cargo new --lib` scaffold. Vector UDFs will be implemented in subsequent changes.
+## Packages
+
+| Name                                                                 |                                                                       Latest version                                                                        |                                                         Documentation                                                          |
+|:---------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------:|
+| [datafusion-functions-jsonschema](./datafusion-functions-jsonschema) | [![datafusion-functions-jsonschema](https://img.shields.io/crates/v/datafusion-functions-jsonschema)](https://crates.io/crates/datafusion-functions-jsonschema) | [![docs.rs](https://img.shields.io/docsrs/datafusion-functions-jsonschema)](https://docs.rs/datafusion-functions-jsonschema) |
 
 ## Contributing
 
