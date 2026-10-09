@@ -1,0 +1,16 @@
+{
+  "description": "Machine-checkable rules from code-rust.md for docs/code/rust-*.md. code.structure.json still applies and decides where References sits; this file adds that References is required.",
+  "frontmatter": {
+    "type": "object",
+    "properties": {
+      "name": { "type": "string", "pattern": "^rust-[a-z0-9]+(?:-[a-z0-9]+)?$" },
+      "type": { "const": "core" },
+      "scope": { "const": "global" }
+    }
+  },
+  "outline": [
+    { "any": true },
+    { "section": "References", "description": "Neighbouring documents, a facet's parent first as Extends." },
+    { "any": true }
+  ]
+}
