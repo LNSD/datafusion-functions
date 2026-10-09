@@ -1,0 +1,71 @@
+{
+  "description": "Machine-checkable rules from code.md for documents in docs/code/.",
+  "empty_sections": "forbidden",
+  "tokens": 20000,
+  "frontmatter": {
+    "type": "object",
+    "required": [
+      "name",
+      "description",
+      "type",
+      "scope"
+    ],
+    "additionalProperties": false,
+    "properties": {
+      "name": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+        "description": "Kebab-case. Must match the filename minus .md, which the checker verifies separately."
+      },
+      "description": {
+        "type": "string",
+        "minLength": 1,
+        "allOf": [
+          {
+            "pattern": "Load when",
+            "$comment": "The trigger clause naming the situations this document governs."
+          },
+          {
+            "not": {
+              "pattern": "\\.\\s*$"
+            },
+            "$comment": "No trailing period."
+          }
+        ]
+      },
+      "type": {
+        "enum": [
+          "principle",
+          "core",
+          "arch",
+          "crate",
+          "meta"
+        ],
+        "description": "The kind of rule. meta is reserved for the format specifications in docs/__meta__/."
+      },
+      "scope": {
+        "type": "string",
+        "pattern": "^(?:global|crate:[a-z0-9]+(?:-[a-z0-9]+)*)$",
+        "description": "global, or crate:<package-name> from this workspace."
+      }
+    }
+  },
+  "outline": [
+    {
+      "any": true,
+      "words": 350
+    },
+    {
+      "section": "Checklist",
+      "words": 250
+    },
+    {
+      "section": "References",
+      "optional": true
+    },
+    {
+      "section": "External References",
+      "optional": true
+    }
+  ]
+}

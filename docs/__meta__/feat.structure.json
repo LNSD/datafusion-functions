@@ -1,0 +1,101 @@
+{
+  "description": "Machine-checkable rules from feat.md for documents in docs/feat/.",
+  "empty_sections": "forbidden",
+  "tokens": 4000,
+  "frontmatter": {
+    "type": "object",
+    "required": [
+      "name",
+      "description",
+      "type",
+      "status",
+      "components"
+    ],
+    "additionalProperties": false,
+    "properties": {
+      "name": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "description": {
+        "type": "string",
+        "minLength": 1,
+        "allOf": [
+          {
+            "pattern": "Load when"
+          },
+          {
+            "not": {
+              "pattern": "\\.\\s*$"
+            }
+          }
+        ]
+      },
+      "type": {
+        "enum": [
+          "meta",
+          "feature",
+          "component"
+        ]
+      },
+      "status": {
+        "enum": [
+          "stable",
+          "experimental",
+          "unstable",
+          "development"
+        ]
+      },
+      "components": {
+        "type": "string",
+        "pattern": "^(?:crate|module|skill|spec):[A-Za-z0-9_:-]+(?:,(?:crate|module|skill|spec):[A-Za-z0-9_:-]+)*$"
+      }
+    }
+  },
+  "outline": [
+    {
+      "section": "Overview",
+      "words": 250,
+      "description": "Purpose, audience, and capability.",
+      "examples": [
+        "This capability lets callers score vectors in DataFusion queries."
+      ]
+    },
+    {
+      "section": "Behavior",
+      "words": 350,
+      "description": "Input contracts, results, limits, and errors.",
+      "examples": [
+        "Invalid input types produce an execution error."
+      ],
+      "optional": true
+    },
+    {
+      "section": "Usage",
+      "words": 500,
+      "description": "Working usage examples; required by review for feature documents.",
+      "examples": [
+        "Run the documented SQL query after registering the function."
+      ],
+      "optional": true
+    },
+    {
+      "section": "References",
+      "words": 200,
+      "description": "Related behavior and external authorities.",
+      "examples": [
+        "- [Apache DataFusion](https://datafusion.apache.org/)"
+      ],
+      "optional": true
+    },
+    {
+      "section": "Code References",
+      "words": 200,
+      "description": "Source paths and responsibilities; required by review for component documents.",
+      "examples": [
+        "- `datafusion-functions-vector/src/lib.rs` - Public API"
+      ],
+      "optional": true
+    }
+  ]
+}
