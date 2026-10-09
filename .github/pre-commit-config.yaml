@@ -12,26 +12,33 @@ repos:
   - repo: local
     hooks:
       - id: format
-        name: Format
-        entry: cargo +nightly fmt --all
+        entry: just fmt
         types: [rust]
         language: system
         pass_filenames: false
       - id: clippy
-        name: Clippy
-        entry: cargo clippy --workspace --all-targets -- -D warnings
+        entry: just clippy
         types: [rust]
         language: system
         pass_filenames: false
       - id: test
-        name: Test
-        entry: cargo test --workspace
+        entry: just test
         types: [rust]
         language: system
         pass_filenames: false
+      - id: test-doc
+        name: Doctests
+        entry: just test-doc
+        types: [rust]
+        language: system
+        pass_filenames: false
+      - id: unused-deps
+        entry: just check-unused-deps
+        files: '(\.rs|Cargo\.toml)$'
+        language: system
+        pass_filenames: false
       - id: docs
-        name: Documentation and skills
-        entry: lorecraft check --root .
+        entry: just docs-check
         files: '^(docs/|\.agents/skills/|AGENTS\.md$|CLAUDE\.md$)'
         language: system
         pass_filenames: false

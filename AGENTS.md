@@ -46,10 +46,10 @@ The `commit` skill owns intent-focused messages, signing, DCO sign-off, and attr
 2. Implement the smallest correct change and update the documentation it makes untrue.
 3. Use `code-format`, then `code-check`. Fix findings instead of weakening gates.
 4. Use `code-test` to select tests for the affected behavior. A filter running zero tests is no evidence.
-5. After changing documents or skills, run `just check-docs` and inspect every finding.
+5. After changing documents or skills, run `just docs-check` and inspect every finding.
 6. Report the result and any validation that could not run.
 
-Lorecraft is separate development tooling, not a crate dependency. `check-docs` uses `lorecraft`
+Lorecraft is separate development tooling, not a crate dependency. `docs-check` uses `lorecraft`
 by default; set `LORECRAFT='uvx lorecraft'` or a command path when needed. Do not install Python
 packages into the system interpreter. Missing specifications mean a corpus is unvalidated.
 

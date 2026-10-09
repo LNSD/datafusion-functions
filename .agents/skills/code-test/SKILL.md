@@ -2,7 +2,7 @@
 name: code-test
 description: Select and run Rust tests after formatting and Clippy pass. Use after changing UDF behavior or public APIs, when tests fail, or when asked about tests, coverage, or test effectiveness.
 compatibility: Requires Rust and just. Coverage and mutation tools are optional and must already be available or separately authorized for installation.
-allowed-tools: Bash(just test *) Bash(just example) Bash(just bench *) Bash(cargo run *) Bash(cargo test *) Bash(cargo bench *) Bash(cargo llvm-cov *) Bash(cargo mutants *)
+allowed-tools: Bash(just test *) Bash(just test-doc *) Bash(just example) Bash(just bench *) Bash(cargo run *) Bash(cargo test *) Bash(cargo bench *) Bash(cargo llvm-cov *) Bash(cargo mutants *)
 ---
 
 # Code Testing
@@ -18,8 +18,9 @@ selecting tests; do not assume an integration, property, example, or benchmark t
 | A runnable example | Run its existing Cargo example target |
 | A benchmark harness | Smoke-check its existing Cargo benchmark target |
 
-`just test` forwards arguments to Cargo and tests the workspace. Use `-p <package>` to focus a
-package, `--test <target>` for an existing integration target, or `--doc` for doctests.
+`just test` runs the workspace through cargo-nextest and forwards arguments to it. Use
+`-p <package>` to focus a package or `--test <target>` for an existing integration target.
+nextest skips doctests; run them with `just test-doc`.
 A filter that runs zero tests does not verify a change. The bootstrap package contains only the
 standard `cargo new --lib` unit test; it verifies the scaffold, not a vector API.
 

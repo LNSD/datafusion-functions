@@ -1,72 +1,121 @@
-name: CI
-
+name: ci
 on:
   push:
     branches: [main]
-  pull_request: {}
+  pull_request:
+    branches: [main]
 
 permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
 
 env:
   CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: full
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
-      - uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
-        with:
-          toolchain: stable
-          components: rustfmt, clippy
-      - uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
-        with:
-          toolchain: nightly
-          components: rustfmt
-      - uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
-      - uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # v3.0.1
-        with:
-          extra_args: --all-files --verbose
-        env:
-          SKIP: test,docs
-
-  docs:
+  ## Formatting and linting
+  rustfmt:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
-      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
-        with:
-          python-version: '3.12'
-      - name: Check documentation and skills
-        run: |
-          python -m venv /tmp/lorecraft
-          /tmp/lorecraft/bin/python -m pip install lorecraft
-          /tmp/lorecraft/bin/lorecraft check --root .
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-  resolve:
+      - name: Setup Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@166cdcfd11aee3cb47222f9ddb555ce30ddb9659 # v1.17.0
+        with:
+          toolchain: nightly # Required for unstable features (see `.rustfmt.toml` for details)
+          components: rustfmt
+          cache: false
+          rustflags: ""
+
+      - name: Setup just
+        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
+
+      - name: Check formatting
+        run: just fmt-check
+
+  check:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions-rust-lang/setup-rust-toolchain@166cdcfd11aee3cb47222f9ddb555ce30ddb9659 # v1.17.0
+        with:
+          cache: true
+          rustflags: ""
+
+      - name: Setup just
+        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
+
+      - name: Cargo check
+        run: just check --all-features
+
+  clippy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions-rust-lang/setup-rust-toolchain@166cdcfd11aee3cb47222f9ddb555ce30ddb9659 # v1.17.0
+        with:
+          components: clippy
+          cache: true
+          rustflags: ""
+
+      - name: Setup just
+        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
+
+      - name: Run clippy
+        run: just clippy --all-features
+
+  check-unused-deps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions-rust-lang/setup-rust-toolchain@166cdcfd11aee3cb47222f9ddb555ce30ddb9659 # v1.17.0
+        with:
+          cache: true
+          rustflags: ""
+
+      - name: Setup just
+        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
+
+      - name: Install cargo-machete
+        uses: baptiste0928/cargo-install@f204293d9709061b7bc1756fec3ec4e2cd57dec0 # v3.4.0
+        with:
+          crate: cargo-machete
+
+      - name: Check for unused dependencies
+        run: just check-unused-deps
+
+  ## Tests
+  resolve-msrv:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
     outputs:
       msrv: ${{ steps.msrv.outputs.msrv }}
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
-      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
-        with:
-          python-version: '3.12'
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # Every package inherits the workspace `rust-version`, so the first package's is the MSRV.
       - id: msrv
-        name: Read the minimum Rust version from Cargo.toml
+        name: Read the minimum Rust version from Cargo metadata
+        env:
+          # Use the runner's preinstalled toolchain instead of installing the pinned one.
+          RUSTUP_TOOLCHAIN: stable
         run: |
-          python -c 'import tomllib; print("msrv=" + tomllib.load(open("Cargo.toml", "rb"))["workspace"]["package"]["rust-version"])' >> "$GITHUB_OUTPUT"
+          msrv="$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[0].rust_version')"
+          echo "msrv=$msrv" >> "$GITHUB_OUTPUT"
 
   test:
-    needs: [resolve]
-    name: Test Rust ${{ matrix.rust-version }}
+    needs: [resolve-msrv]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
@@ -74,23 +123,50 @@ jobs:
       matrix:
         rust-version: [stable, nightly]
         include:
-          - rust-version: ${{ needs.resolve.outputs.msrv }}
+          - rust-version: ${{ needs.resolve-msrv.outputs.msrv }}
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
-      - uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions-rust-lang/setup-rust-toolchain@166cdcfd11aee3cb47222f9ddb555ce30ddb9659 # v1.17.0
         with:
           toolchain: ${{ matrix.rust-version }}
-      - uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
-        with:
-          key: ${{ matrix.rust-version }}
-      - run: cargo +${{ matrix.rust-version }} test --workspace --all-features
+          cache: true
+          rustflags: ""
 
-  check:
-    if: always()
-    needs: [lint, docs, test]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Require all checks to pass
-        uses: re-actors/alls-green@05ac9388f0aebcb5727afa17fcccfecd6f8ec5fe # v1.2.2
+      - name: Setup just
+        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
+
+      - name: Install cargo-nextest
+        uses: baptiste0928/cargo-install@f204293d9709061b7bc1756fec3ec4e2cd57dec0 # v3.4.0
         with:
-          jobs: ${{ toJSON(needs) }}
+          crate: cargo-nextest
+          version: ^0.9
+
+      - name: Run tests
+        run: just test --verbose
+        env:
+          # Overrides `rust-toolchain.toml`, so the tests run on the matrix toolchain.
+          RUSTUP_TOOLCHAIN: ${{ matrix.rust-version }}
+
+      - name: Run doctests
+        run: just test-doc
+        env:
+          RUSTUP_TOOLCHAIN: ${{ matrix.rust-version }}
+
+  ## Docs
+  docs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          enable-cache: true
+
+      - uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
+
+      - name: Check documents and skills
+        run: just docs-check
+        env:
+          LORECRAFT: uvx lorecraft
