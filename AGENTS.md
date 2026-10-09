@@ -31,7 +31,7 @@ integration tests, or benchmarks. Add behavior and its documentation together.
 Feature documents belong in `docs/feat/` and describe implemented behavior. Code rules belong in
 `docs/code/` and are binding when present. Do not invent rules from an absent corpus.
 
-Skills live in `.agents/skills/`; `.claude/skills` points there, and `CLAUDE.md` points to this guide.
+Skills live in `.agents/skills/` and `.claude/skills` points there.
 Keep compatibility symlinks relative and inside the checkout. No skill may depend on a symlink
 pointing outside the repository.
 
