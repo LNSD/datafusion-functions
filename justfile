@@ -93,6 +93,11 @@ test-doc *EXTRA_FLAGS:
 docs-check *EXTRA_FLAGS:
     {{env_var_or_default("LORECRAFT", "lorecraft")}} check --root . {{EXTRA_FLAGS}}
 
+# Show the corpora, specifications, documents, and skills Lorecraft resolves (lorecraft inspect)
+[group: 'docs']
+docs-inspect *EXTRA_FLAGS:
+    {{env_var_or_default("LORECRAFT", "lorecraft")}} inspect . {{EXTRA_FLAGS}}
+
 
 ## Release
 
@@ -162,6 +167,11 @@ remove-git-hooks HOOKS=PRECOMMIT_DEFAULT_HOOKS:
 [group: 'misc']
 install-cargo-nextest:
     cargo install --locked cargo-nextest@^0.9
+
+# Install Lorecraft (documentation and skill checker)
+[group: 'misc']
+install-lorecraft:
+    uv tool install lorecraft
 
 # Install cargo-machete (unused dependency checker)
 [group: 'misc']
