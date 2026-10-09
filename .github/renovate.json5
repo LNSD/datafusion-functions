@@ -5,12 +5,23 @@
     ':semanticCommitTypeAll(chore)',
     'helpers:pinGitHubActionDigests',
   ],
-  enabledManagers: ['cargo', 'github-actions'],
+  enabledManagers: ['cargo', 'github-actions', 'custom.regex'],
   packageRules: [
     {
       groupName: 'arrow-datafusion',
       matchManagers: ['cargo'],
       matchPackageNames: ['/^arrow(-.*)?$/', '/^datafusion(-.*)?$/'],
+    },
+  ],
+  customManagers: [
+    // Bump the pinned Rust toolchain to each new stable release.
+    {
+      customType: 'regex',
+      managerFilePatterns: ['/^rust-toolchain(\\.toml)?$/'],
+      matchStrings: ['channel\\s*=\\s*"(?<currentValue>\\d+\\.\\d+\\.\\d+)"'],
+      depNameTemplate: 'rust',
+      packageNameTemplate: 'rust-lang/rust',
+      datasourceTemplate: 'github-releases',
     },
   ],
 }
