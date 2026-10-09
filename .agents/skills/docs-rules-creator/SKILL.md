@@ -1,8 +1,8 @@
 ---
 name: docs-rules-creator
 description: Write or change the Lorecraft specifications in docs/__meta__/ for any corpus under docs/ - a prose specification, and its structure specification for frontmatter schema, section outline, word caps and token budget. Use when adopting Lorecraft in a repository, adding a corpus or a namespace, adding a frontmatter field or a required section, changing a word cap or token budget, or fixing a specification that fails to load or that /docs-rules-check reported. Not for writing the documents a specification governs, see /docs-rules; not for reviewing a specification, see /docs-rules-check
-compatibility: Requires the lorecraft command, on PATH or run through uvx lorecraft, or uv run lorecraft in a uv project that declares Lorecraft as a dependency
-allowed-tools: Bash(lorecraft check --root .*) Bash(lorecraft inspect*) Bash(uvx lorecraft *) Bash(uv run lorecraft *) Bash(rg *) Bash(ls docs/*)
+compatibility: Requires the just task runner and Lorecraft, on PATH or through LORECRAFT='uvx lorecraft'
+allowed-tools: Bash(just docs-check*) Bash(just docs-inspect*) Bash(rg *) Bash(ls docs/*)
 ---
 
 # Docs Rules Creator
@@ -20,17 +20,18 @@ The rules below are summaries. The authorities are Lorecraft's guides, and each 
 [spec-structure-budget](https://github.com/LNSD/lorecraft/blob/main/docs/feat/spec-structure-budget.md) for its keys,
 [workspace](https://github.com/LNSD/lorecraft/blob/main/docs/feat/workspace.md) for the layout.
 
-## Running lorecraft
+## Running Lorecraft
 
-Every command below calls `lorecraft` directly. Where it is not on `PATH`, run `uvx lorecraft …` instead, or
-`uv run lorecraft …` in a uv project that declares Lorecraft as a dependency. Run from the repository root.
+Every command below runs Lorecraft through a `just` recipe, from the repository root: `just docs-check` runs
+`lorecraft check --root .` and `just docs-inspect` runs `lorecraft inspect`, each forwarding extra options. Where
+`lorecraft` is not on `PATH`, set `LORECRAFT='uvx lorecraft'`.
 
 ## 1. The files and their names
 
 ```text
 docs/__meta__/<name>.md               the prose: the authority, written for a reader
 docs/__meta__/<name>.structure.json   the section rules, word caps, tokens budget and frontmatter
-                                      schema, read by lorecraft check --root .
+                                      schema, read by just docs-check
 ```
 
 What a file is comes from its **file type**, which a file name **pattern** claims: `*.md` claims the prose and
@@ -129,8 +130,8 @@ still loads, and governs nothing.
 ## 6. Verify
 
 ```bash
-lorecraft inspect   # loads every specification; exit 2 names a file that cannot be loaded
-lorecraft check --root .     # applies them to every document; exit 2 names a specification that cannot be loaded
+just docs-inspect   # loads every specification; exit 2 names a file that cannot be loaded
+just docs-check     # applies them to every document; exit 2 names a specification that cannot be loaded
 ```
 
 Check in the tree that each document shows the specification names you meant, then run `/docs-rules-check` for

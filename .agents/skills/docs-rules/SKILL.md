@@ -1,8 +1,8 @@
 ---
 name: docs-rules
-description: Load the Lorecraft specifications that govern a document under docs/ before writing it - its frontmatter, section outline, word caps and token budget. Use before creating or editing a document under docs/, when choosing which corpus a document belongs in, or when fixing findings from lorecraft check --root . or /docs-rules-check. Not for writing the specifications themselves; see /docs-rules-creator
-compatibility: Requires the lorecraft command, on PATH or run through uvx lorecraft, or uv run lorecraft in a uv project that declares Lorecraft as a dependency
-allowed-tools: Bash(lorecraft check --root .*) Bash(lorecraft inspect*) Bash(uvx lorecraft *) Bash(uv run lorecraft *) Bash(rg *) Bash(ls docs/*)
+description: Load the Lorecraft specifications that govern a document under docs/ before writing it - its frontmatter, section outline, word caps and token budget. Use before creating or editing a document under docs/, when choosing which corpus a document belongs in, or when fixing findings from just docs-check or /docs-rules-check. Not for writing the specifications themselves; see /docs-rules-creator
+compatibility: Requires the just task runner and Lorecraft, on PATH or through LORECRAFT='uvx lorecraft'
+allowed-tools: Bash(just docs-check*) Bash(just docs-inspect*) Bash(rg *) Bash(ls docs/*)
 ---
 
 # Docs Rules
@@ -18,18 +18,19 @@ you into them. How Lorecraft lays out a repository is in
 specifications is in [spec](https://github.com/LNSD/lorecraft/blob/main/docs/feat/spec.md). Read them when a document
 is not where you expect it or not governed the way you expect.
 
-## Running lorecraft
+## Running Lorecraft
 
-Every command below calls `lorecraft` directly. Where it is not on `PATH`, run `uvx lorecraft …` instead, or
-`uv run lorecraft …` in a uv project that declares Lorecraft as a dependency. Run from the repository root.
+Every command below runs Lorecraft through a `just` recipe, from the repository root: `just docs-check` runs
+`lorecraft check --root .` and `just docs-inspect` runs `lorecraft inspect`, each forwarding extra options. Where
+`lorecraft` is not on `PATH`, set `LORECRAFT='uvx lorecraft'`.
 
 ## 1. Resolve the specifications
 
-Do not resolve specifications by hand. `lorecraft inspect` resolves them with the same rules the checks apply:
+Do not resolve specifications by hand. `just docs-inspect` resolves them with the same rules the checks apply:
 
 ```bash
-lorecraft inspect                 # a tree: corpora, their specification names, each document with its own, then the skills
-lorecraft inspect --format json   # the same model; each document's governed_by lists its files
+just docs-inspect                 # a tree: corpora, their specification names, each document with its own, then the skills
+just docs-inspect --format json   # the same model; each document's governed_by lists its files
 ```
 
 In the tree, each document is followed by the names of the specifications governing it, broad to narrow:
@@ -70,7 +71,7 @@ If it needs a corpus that does not exist yet, that is a new specification: use `
 5. **Run the checks** as soon as the frontmatter exists, and again before handing the change over:
 
    ```bash
-   lorecraft check --root .
+   just docs-check
    ```
 
    It checks the whole workspace, so a new document that breaks a neighbour shows too. Read the diagnostics
@@ -102,7 +103,7 @@ next file that lands, and no check fails when it does. Write the derivation inst
 | Instead of listing | Point at |
 |---|---|
 | The documents in a corpus | The corpus directory |
-| The specifications governing a document | `lorecraft inspect` |
+| The specifications governing a document | `just docs-inspect` |
 | Where a subject is covered | The one or two documents that cover it, in the references section |
 
 A references section is the one legitimate listing: it names what the document depends on, not everything that

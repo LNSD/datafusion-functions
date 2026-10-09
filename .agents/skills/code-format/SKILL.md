@@ -15,7 +15,8 @@ just fmt-check
 ```
 
 The recipes format all Cargo targets. `.rustfmt.toml` uses nightly options, and the recipes select nightly explicitly.
-Keep one rustfmt configuration; stable remains the build and lint toolchain.
+Keep one rustfmt configuration; the release pinned in `rust-toolchain.toml` remains the build and lint
+toolchain.
 
 Format a coherent change before `/code-check`. Inspect the diff after formatting: report pre-existing
 formatting changes outside the task instead of silently absorbing them. Reformat after a manual lint fix

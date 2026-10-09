@@ -1,8 +1,8 @@
 ---
 name: skills-check
-description: Write agent skills that comply with the Agent Skills specification, and check the skills a repository's agents read against it with lorecraft check --root . - frontmatter, the 500-line budget, links, and what no check can decide. Use before creating or editing a SKILL.md or any file in a skill directory, when reviewing a skill change, before committing one, or when lorecraft check --root . reports a diagnostic in a skill
-compatibility: Requires the lorecraft command, on PATH or run through uvx lorecraft, or uv run lorecraft in a uv project that declares Lorecraft as a dependency, and a git checkout
-allowed-tools: Bash(lorecraft check --root .*) Bash(lorecraft inspect*) Bash(uvx lorecraft check --root .*) Bash(uvx lorecraft inspect*) Bash(uv run lorecraft check --root .*) Bash(uv run lorecraft inspect*) Bash(git diff *) Bash(git status *) Bash(git merge-base *) Bash(rg -l *)
+description: Write agent skills that comply with the Agent Skills specification, and check the skills a repository's agents read against it with just docs-check - frontmatter, the 500-line budget, links, and what no check can decide. Use before creating or editing a SKILL.md or any file in a skill directory, when reviewing a skill change, before committing one, or when just docs-check reports a diagnostic in a skill
+compatibility: Requires the just task runner and Lorecraft, on PATH or through LORECRAFT='uvx lorecraft', and a git checkout
+allowed-tools: Bash(just docs-check*) Bash(just docs-inspect*) Bash(git diff *) Bash(git status *) Bash(git merge-base *) Bash(rg -l *)
 ---
 
 # Skills Check
@@ -16,10 +16,11 @@ The specification is the authority. Where this skill and the specification disag
 and this skill has a bug. A repository may allow more in skills only its own agents load; its agent
 instructions say what, and where they say nothing, the specification alone applies.
 
-## Running lorecraft
+## Running Lorecraft
 
-Every command below calls `lorecraft` directly. Where it is not on `PATH`, run `uvx lorecraft …` instead, or
-`uv run lorecraft …` in a uv project that declares Lorecraft as a dependency. Run from the repository root.
+Every command below runs Lorecraft through a `just` recipe, from the repository root: `just docs-check` runs
+`lorecraft check --root .` and `just docs-inspect` runs `lorecraft inspect`, each forwarding extra options. Where
+`lorecraft` is not on `PATH`, set `LORECRAFT='uvx lorecraft'`.
 
 ## 1. Where agents read skills
 
@@ -27,14 +28,14 @@ An agent reads skills from its skills directories, such as `.agents/skills` or `
 the repository has, and every skill with the agents that read it:
 
 ```bash
-lorecraft inspect                 # the skills follow the corpora in the tree
-lorecraft inspect --format json   # agent_skills_dirs and skills
+just docs-inspect                 # the skills follow the corpora in the tree
+just docs-inspect --format json   # agent_skills_dirs and skills
 ```
 
 [cli-inspect](https://github.com/LNSD/lorecraft/blob/main/docs/feat/cli-inspect.md) describes the output. A skill is
 known by the entry an agent lists. A skill kept in a directory no agent reads is linked into a skills directory by a
-symlink, and the symlink takes the skill's name, because that entry is the name an agent knows it by. `lorecraft check --root .
-skills` reads the skills where agents list them, so it checks a linked skill once, through its entry.
+symlink, and the symlink takes the skill's name, because that entry is the name an agent knows it by. `just docs-check`
+reads the skills where agents list them, so it checks a linked skill once, through its entry.
 
 ## 2. Frontmatter
 
@@ -48,9 +49,9 @@ anchors, aliases or tags: a value containing `: ` must be quoted, and a value co
 | `license` | No | A license name, or the name of a bundled license file |
 | `compatibility` | No | 1-500 characters. Environment requirements: products, system packages, network access. Omit it when there are none |
 | `metadata` | No | A map from string keys to string values. Quote numbers (`version: "1.0"`) and join lists with spaces |
-| `allowed-tools` | No | A space-separated string of pre-approved tools. `lorecraft check --root .` warns on malformed entries and values over 500 characters, a Lorecraft recommendation rather than an upstream limit. Pattern whitespace stays intact. Experimental: support varies between agents |
+| `allowed-tools` | No | A space-separated string of pre-approved tools. `just docs-check` warns on malformed entries and values over 500 characters, a Lorecraft recommendation rather than an upstream limit. Pattern whitespace stays intact. Experimental: support varies between agents |
 
-No other field is allowed: `lorecraft check --root .` holds every skill to these six and reports anything else as `FM007`
+No other field is allowed: `just docs-check` holds every skill to these six and reports anything else as `FM007`
 `unknown-field`, including a field one agent reads, such as `model` or `argument-hint`. `FM007` is a warning, so
 the run still exits 0: treat a `warning` at a skill path as a finding to fix, not a pass.
 
@@ -103,7 +104,7 @@ See [logging](https://github.com/acme/widgets/blob/main/docs/code/logging.md).
 written there is a string like any other, and a link to `references/<file>` it names is broken.
 
 The repository path inside each URL is the reverse index: `rg -l docs/code/logging.md <skills-dir>/*/SKILL.md`,
-over each skills directory `lorecraft inspect` lists, names every skill that links that document, which is how a
+over each skills directory `just docs-inspect` lists, names every skill that links that document, which is how a
 document change finds the skills it may have stranded (§8).
 
 ## 5. The changeset
@@ -121,7 +122,7 @@ subject: `rg -l <path>` over the skills directories prints them, one per line (�
 
 ## 6. Run the check
 
-`lorecraft check --root .` decides every mechanical rule. Do not check those rules by hand.
+`just docs-check` decides every mechanical rule. Do not check those rules by hand.
 
 It decides the frontmatter: YAML validity, the six fields and their limits, `metadata` value types, `name`
 against the directory an agent lists the skill by, through any symlink, and whether `allowed-tools` entries
@@ -135,10 +136,10 @@ reports a symlink an agent would follow out of the repository, wherever it sits 
 codes: `FM` for the frontmatter, `LEN002` for the line budget, `LINK` for the links and `LAY001` for a symlink.
 
 ```bash
-lorecraft check --root .                  # every document and every skill of the workspace
-lorecraft check --root . --format json    # machine-readable
-lorecraft check --root . --select FM      # one group's rules, by prefix, while fixing them; never the gate
-lorecraft check --root . --help           # options and exit codes
+just docs-check                 # every document and every skill of the workspace
+just docs-check --format json   # machine-readable
+just docs-check --select FM     # one group's rules, by prefix, while fixing them; never the gate
+just docs-check --help          # options and exit codes
 ```
 
 The run covers the whole workspace, the documents under `docs/` included; read the diagnostics at the paths of the

@@ -1,8 +1,8 @@
 ---
 name: docs-rules-check
-description: Review documents under docs/ and the Lorecraft specifications in docs/__meta__/ that govern them - run lorecraft check --root . for frontmatter, section outline, word caps and token budget, walk each specification's checklist for what a machine cannot decide, and check that each changed specification loads, that its prose and JSON agree, and that it governs the documents intended. Use after editing anything under docs/, when reviewing a pull request that touches docs/, before committing, when lorecraft check --root . exits 2 or a document is unexpectedly ungoverned, or when setting the checks up in CI. Not for writing documents or specifications; see /docs-rules and /docs-rules-creator
-compatibility: Requires the lorecraft command, on PATH or run through uvx lorecraft, or uv run lorecraft in a uv project that declares Lorecraft as a dependency, and a git checkout
-allowed-tools: Bash(lorecraft check --root .*) Bash(lorecraft inspect*) Bash(uvx lorecraft *) Bash(uv run lorecraft *) Bash(git diff *) Bash(git status *) Bash(git merge-base *) Bash(rg *) Bash(ls docs/*)
+description: Review documents under docs/ and the Lorecraft specifications in docs/__meta__/ that govern them - run just docs-check for frontmatter, section outline, word caps and token budget, walk each specification's checklist for what a machine cannot decide, and check that each changed specification loads, that its prose and JSON agree, and that it governs the documents intended. Use after editing anything under docs/, when reviewing a pull request that touches docs/, before committing, when just docs-check exits 2 or a document is unexpectedly ungoverned, or when setting the checks up in CI. Not for writing documents or specifications; see /docs-rules and /docs-rules-creator
+compatibility: Requires the just task runner and Lorecraft, on PATH or through LORECRAFT='uvx lorecraft', and a git checkout
+allowed-tools: Bash(just docs-check*) Bash(just docs-inspect*) Bash(git diff *) Bash(git status *) Bash(git merge-base *) Bash(rg *) Bash(ls docs/*)
 ---
 
 # Docs Rules Check
@@ -16,10 +16,11 @@ This skill carries no per-corpus rules. It resolves the specifications from each
 against them. It reports; the fixes belong to the writing paths — `/docs-rules` for a document,
 `/docs-rules-creator` for a specification.
 
-## Running lorecraft
+## Running Lorecraft
 
-Every command below calls `lorecraft` directly. Where it is not on `PATH`, run `uvx lorecraft …` instead, or
-`uv run lorecraft …` in a uv project that declares Lorecraft as a dependency. Run from the repository root.
+Every command below runs Lorecraft through a `just` recipe, from the repository root: `just docs-check` runs
+`lorecraft check --root .` and `just docs-inspect` runs `lorecraft inspect`, each forwarding extra options. Where
+`lorecraft` is not on `PATH`, set `LORECRAFT='uvx lorecraft'`.
 
 ## 1. The changeset
 
@@ -37,7 +38,7 @@ Given explicit paths, check those instead. Split what changed in two:
 ## 2. The specifications that govern each document
 
 ```bash
-lorecraft inspect
+just docs-inspect
 ```
 
 Each document is followed by the names of the specifications governing it, broad to narrow; the name `<name>` is the
@@ -55,9 +56,9 @@ patterns, `name` against the filename, the title, section order, empty and forbi
 token budget. Do not check those by hand.
 
 ```bash
-lorecraft check --root .                              # every rule over every document and skill, one read of the tree
-lorecraft check --root . --format json                # machine-readable
-lorecraft check --root . --select OUT                 # one group's rules, by prefix, while fixing them; never the gate
+just docs-check                 # every rule over every document and skill, one read of the tree
+just docs-check --format json   # machine-readable
+just docs-check --select OUT    # one group's rules, by prefix, while fixing them; never the gate
 ```
 
 The run covers the whole workspace; read the diagnostics for the documents the change touches. A diagnostic prints as
@@ -91,7 +92,7 @@ The one exception is §5.
 A list of files inside a document is a second source of truth nothing keeps honest. **Flag every one, whether
 or not the changeset introduced it**: a table or list whose entries are documents, a "see also" naming each
 sibling, a count ("the four principle documents"). For each, report the derivation that should replace it: the
-corpus directory, a naming convention, or `lorecraft inspect`. A references section naming what a document
+corpus directory, a naming convention, or `just docs-inspect`. A references section naming what a document
 depends on is not a finding. Where a list survives for a stated reason, compare it with `ls docs/<corpus>/`; a
 list already out of sync is a finding.
 
@@ -101,11 +102,11 @@ Lorecraft loads and validates each JSON file on its own, but it cannot tell whet
 prose says, or whether a specification name governs the documents its author meant. Check each changed
 specification for both.
 
-**Load.** `lorecraft inspect` validates every specification before any document is read. A structure specification
+**Load.** `just docs-inspect` validates every specification before any document is read. A structure specification
 must use only the dialect's keys and state usable rules, and its `frontmatter` key must satisfy the JSON Schema Draft
 2020-12 meta-schema, state `"type": "object"` at its root, and carry no `$id` at any depth. A leftover
 `<name>.header.json` is not read: its schema belongs in that key now. A file that fails stops the run with an error
-naming it: `inspect` and `lorecraft check --root .` both exit `2`. That error is the finding;
+naming it: `inspect` and `just docs-check` both exit `2`. That error is the finding;
 [spec-structure](https://github.com/LNSD/lorecraft/blob/main/docs/feat/spec-structure.md) says what is refused for any
 file, and [spec-structure-outline](https://github.com/LNSD/lorecraft/blob/main/docs/feat/spec-structure-outline.md),
 [spec-structure-budget](https://github.com/LNSD/lorecraft/blob/main/docs/feat/spec-structure-budget.md) and
@@ -139,7 +140,7 @@ is refused for their keys.
 - A checklist: the prose ends with checklist items for the rules no JSON file holds, since those are checked by
   reading or not at all.
 
-**Consequence.** Run `lorecraft check --root .`. A rule change that breaks existing documents must fix them in the same
+**Consequence.** Run `just docs-check`. A rule change that breaks existing documents must fix them in the same
 change, or say why they are left: a finding the changed specification introduced belongs to this changeset.
 
 ## 7. Report
@@ -164,7 +165,7 @@ Findings, per document or specification, most severe first, one per line, with t
 
 ## Setting the checks up in CI
 
-`lorecraft check --root .` is the whole gate: it runs every rule over every document and every skill, and exits
+`just docs-check` is the whole gate: it runs every rule over every document and every skill, and exits
 non-zero on an error or a specification that cannot load. Run it in CI and in a pre-commit
 hook as is; do not narrow it to changed files, since a change to one document or specification can break
 another.
