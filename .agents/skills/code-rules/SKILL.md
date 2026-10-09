@@ -39,9 +39,10 @@ not obvious.
 
 Match the task against the trigger clauses, then:
 
-- **Take the most specific match.** A filename prefix is a group: `rust-*`, `test-*`. Read the member whose
-  trigger fits — the document on docstrings for a docstring, the one on handling errors for an `except` — not
-  the group's broadest document. Add a broader one only when the task turns on what it owns.
+- **Take the most specific match.** A filename prefix is a group: `pattern-*`, `principle-*`. Read the member
+  whose trigger fits — `pattern-builder` for a UDF with several required settings, `pattern-newtype` for a bare
+  vector dimension — not the group's broadest document. Add a broader one only when the task turns on what it
+  owns.
 - **Expect two to four documents.** One is common. More than four means the task is unscoped, or you are
   matching topics instead of triggers.
 - **Break ties by specificity**: a document scoped to the package or directory being changed over a global

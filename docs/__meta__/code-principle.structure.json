@@ -1,0 +1,18 @@
+{
+  "description": "Machine-checkable rules from code-principle.md for docs/code/principle-*.md. code.structure.json still applies and decides how the document closes.",
+  "frontmatter": {
+    "type": "object",
+    "properties": {
+      "name": { "type": "string", "pattern": "^principle-" },
+      "type": { "const": "principle" },
+      "scope": { "const": "global" }
+    }
+  },
+  "outline": [
+    { "section": "Rule", "description": "What to do and how to recognize a violation." },
+    { "section": "Examples", "description": "One to five Bad/Good Rust code pairs, Bad first." },
+    { "section": "Why It Matters", "description": "The consequences of violating the principle." },
+    { "section": "Pragmatism Caveat", "description": "When deviating is acceptable and how it is documented." },
+    { "any": true }
+  ]
+}

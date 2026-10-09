@@ -58,12 +58,12 @@ two groups flagging one line are reported once, citing both.
 
 Clean:
 
-> Rules check clean. Applied: `rust-types`, `error-handling`, `rustdoc`.
+> Rules check clean. Applied: `pattern-newtype`, `principle-validate-at-edge`.
 
 Violations, most severe first, one per line, with the fix:
 
-> `src/common.rs:118` — **error-handling**: this unchecked downcast can panic on caller-provided
-> Arrow input. Return a typed execution error instead.
+> `src/common.rs:118` — **principle-validate-at-edge**: the kernel re-checks the vector dimension on
+> every row. Resolve it once at planning time into a `Dimension` and pass that in.
 
 - **Every finding cites the document that states the rule.** A finding with no document behind it is a style
   opinion — drop it.
