@@ -27,7 +27,7 @@ integration tests, or benchmarks. Add behavior and its documentation together.
 
 ## Documentation and Skills
 
-`docs/__meta__/` holds the base format specifications for feature documentation and code rules.
+`docs/__meta__/` holds the format specifications for feature documentation and code rules.
 Feature documents belong in `docs/feat/` and describe implemented behavior. Code rules belong in
 `docs/code/` and are binding when present. Do not invent rules from an absent corpus.
 
