@@ -19,8 +19,6 @@ The root `Cargo.toml` contains workspace configuration and shared package metada
 live at the workspace root, with the package name as the directory name; do not apply another project's
 package prefix. Members are listed alphabetically. Package manifests inherit shared metadata.
 
-`rust-toolchain.toml` selects stable Rust for development. `.rustfmt.toml` contains nightly settings;
-format through `just fmt` and `just fmt-check`. Keep the workspace MSRV and CI matrix consistent.
 Inspect `.gitignore` before assuming whether build output or lockfiles are tracked.
 
 `justfile` is the command authority. Use `just --list` to discover recipes; do not duplicate their
