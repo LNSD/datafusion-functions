@@ -1,7 +1,6 @@
 # DataFusion Functions - Agent Guide
 
-This repository is a Rust workspace for Apache DataFusion extension functions. The initial
-`datafusion-functions-vector` package is a `cargo new --lib` scaffold at the workspace root.
+This repository is a Rust workspace for Apache DataFusion extension functions.
 
 ## Working Rules
 
@@ -22,8 +21,7 @@ package prefix. Members are listed alphabetically. Package manifests inherit sha
 Inspect `.gitignore` before assuming whether build output or lockfiles are tracked.
 
 `justfile` is the command authority. Use `just --list` to discover recipes; do not duplicate their
-implementation in documentation. The bootstrap has no runtime dependencies, vector UDFs, examples,
-integration tests, or benchmarks. Add behavior and its documentation together.
+implementation in documentation. Add behavior and its documentation together.
 
 ## Documentation and Skills
 

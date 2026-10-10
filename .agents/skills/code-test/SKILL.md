@@ -20,8 +20,7 @@ selecting tests; do not assume an integration, property, example, or benchmark t
 `just test` runs the workspace through cargo-nextest and forwards arguments to it. Use
 `-p <package>` to focus a package or `--test <target>` for an existing integration target.
 nextest skips doctests; run them with `just test-doc`.
-A filter that runs zero tests does not verify a change. The bootstrap package contains only the
-standard `cargo new --lib` unit test; it verifies the scaffold, not a vector API.
+A filter that runs zero tests does not verify a change.
 
 ## Benchmarks
 
