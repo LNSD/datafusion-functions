@@ -1,5 +1,5 @@
 {
-  "description": "Machine-checkable rules from feat.md for documents in docs/feat/.",
+  "description": "Frontmatter, section structure, section word caps and token budget for a feature document in docs/feat/. The prose authority is docs/__meta__/feat.md: section 2 for the frontmatter, section 4 for the structure, section 6 for the caps and the budget. It is the base layer: a namespace layer, feat-<namespace>.structure.json, is applied on its own beside it and can only add to it. Summary opens every document, then Table of Contents and Key Concepts when present; sections a document adds go directly after those or after Limitations; References then Code References close it. Usage and Code References are optional here for every type; which type requires or forbids them is checked by review. Fenced code blocks and table rows cost no words.",
   "empty_sections": "forbidden",
   "tokens": 4000,
   "frontmatter": {
@@ -49,53 +49,98 @@
       "components": {
         "type": "string",
         "pattern": "^(?:crate|module|skill|spec):[A-Za-z0-9_:-]+(?:,(?:crate|module|skill|spec):[A-Za-z0-9_:-]+)*$"
+      },
+      "crate": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
       }
     }
   },
   "outline": [
     {
-      "section": "Overview",
-      "words": 250,
-      "description": "Purpose, audience, and capability.",
+      "section": "Summary",
+      "words": 80,
+      "description": "Two to four sentences expanding on the frontmatter description: what the feature does, why it exists and its primary use.",
       "examples": [
-        "This capability lets callers score vectors in DataFusion queries."
+        "`datafusion-functions-jsonschema` adds JSON Schema validation to DataFusion SQL."
       ]
     },
     {
-      "section": "Behavior",
-      "words": 350,
-      "description": "Input contracts, results, limits, and errors.",
+      "section": "Table of Contents",
+      "optional": true,
+      "description": "Links to the sections below it, one numbered entry per section, starting at Key Concepts.",
       "examples": [
-        "Invalid input types produce an execution error."
-      ],
-      "optional": true
+        "1. [Key Concepts](#key-concepts)\n2. [Usage](#usage)\n3. [References](#references)"
+      ]
+    },
+    {
+      "section": "Key Concepts",
+      "optional": true,
+      "words": 200,
+      "description": "The terms the document uses, defined once, in one line each.",
+      "examples": [
+        "- **Instance**: The JSON text being validated."
+      ]
+    },
+    {
+      "any": true,
+      "words": 300
+    },
+    {
+      "section": "Architecture",
+      "optional": true,
+      "words": 400,
+      "description": "How the feature fits together, when usage does not show it.",
+      "examples": [
+        "A literal schema is compiled once at planning; a schema column is compiled per distinct schema."
+      ]
+    },
+    {
+      "section": "Configuration",
+      "optional": true,
+      "words": 300,
+      "description": "Options, their defaults and where they are read from, usually as a table.",
+      "examples": [
+        "| Option | Default | Meaning |\n|---|---|---|\n| `max_errors` | `100` | Errors listed per row |"
+      ]
     },
     {
       "section": "Usage",
-      "words": 500,
-      "description": "Working usage examples; required by review for feature documents.",
+      "optional": true,
+      "words": 400,
+      "description": "How to invoke the feature, with working examples in fenced blocks. Required for a feature document, forbidden for a meta document.",
       "examples": [
-        "Run the documented SQL query after registering the function."
-      ],
-      "optional": true
+        "```sql\nSELECT id, jsonschema_valid(body, schema) AS valid FROM requests;\n```"
+      ]
+    },
+    {
+      "section": "Limitations",
+      "optional": true,
+      "words": 200,
+      "description": "The feature's known constraints, as a short list.",
+      "examples": [
+        "- No `$ref` is fetched from the network or the filesystem."
+      ]
+    },
+    {
+      "any": true,
+      "words": 300
     },
     {
       "section": "References",
-      "words": 200,
-      "description": "Related behavior and external authorities.",
+      "optional": true,
+      "description": "Cross-references, one per line with the relationship named first, linking up to the base and never down to an extension.",
       "examples": [
-        "- [Apache DataFusion](https://datafusion.apache.org/)"
-      ],
-      "optional": true
+        "- [datafusion-functions-jsonschema](datafusion-functions-jsonschema.md) - Base: registering the package's functions"
+      ]
     },
     {
       "section": "Code References",
-      "words": 200,
-      "description": "Source paths and responsibilities; required by review for component documents.",
+      "optional": true,
+      "description": "The source files behind the feature, one entry per line and never wrapped. Required for a component document, forbidden for a meta document.",
       "examples": [
-        "- `datafusion-functions-vector/src/lib.rs` - Public API"
-      ],
-      "optional": true
+        "- `datafusion-functions-jsonschema/src/lib.rs` - Public API and `register_all`"
+      ]
     }
   ]
 }
