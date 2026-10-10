@@ -9,6 +9,14 @@ repository.workspace = true
 keywords = ["datafusion", "jsonschema", "json", "sql", "validation"]
 categories = ["database-implementations", "encoding"]
 
+# The library has no `#[bench]` functions; without this, `cargo bench` hands Criterion flags to its libtest harness
+[lib]
+bench = false
+
+[[bench]]
+name = "main"
+harness = false
+
 [dependencies]
 datafusion = { version = "55", default-features = false }
 jsonschema = { version = "0.58", default-features = false }
@@ -17,6 +25,7 @@ serde_json = "1"
 thiserror = "2"
 
 [dev-dependencies]
+codspeed-criterion-compat = "5"
 # Struct field access such as `jsonschema_errors(...)['errors']` needs nested_expressions
 datafusion = { version = "55", default-features = false, features = ["nested_expressions", "sql"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
