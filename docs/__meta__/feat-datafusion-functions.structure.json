@@ -1,0 +1,54 @@
+{
+  "description": "Machine-checkable rules from feat-datafusion-functions.md for docs/feat/datafusion-functions-*.md. feat.structure.json still applies; this file pins the frontmatter values, adds an optional Semantics section after the opening sections, makes Usage and References required, and forbids a Table of Contents and Key Concepts.",
+  "forbidden": [
+    "Table of Contents",
+    "Key Concepts"
+  ],
+  "frontmatter": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "pattern": "^datafusion-functions-[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "type": {
+        "const": "feature"
+      },
+      "components": {
+        "type": "string",
+        "pattern": "(?:^|,)crate:datafusion-functions-[a-z0-9]+(?:-[a-z0-9]+)*(?:,|$)"
+      }
+    }
+  },
+  "outline": [
+    {
+      "section": "Summary",
+      "description": "What the package provides and for whom, ending with the register_all call in a rust block.",
+      "examples": [
+        "`datafusion-functions-jsonschema` adds JSON Schema validation to DataFusion SQL.\n\n```rust\ndatafusion_functions_jsonschema::register_all(&mut ctx)?;\n```"
+      ]
+    },
+    {
+      "section": "Semantics",
+      "optional": true,
+      "description": "Rules every function of the package shares.",
+      "examples": [
+        "- No function fetches a `$ref` from the network or the filesystem."
+      ]
+    },
+    {
+      "section": "Usage",
+      "description": "Rust registration on a SessionContext imported from datafusion::execution::context, whether it replaces a built-in, then a SQL query.",
+      "examples": [
+        "```rust\nuse datafusion::execution::context::SessionContext;\n\nlet mut ctx = SessionContext::new();\ndatafusion_functions_jsonschema::register_all(&mut ctx)?;\n```"
+      ]
+    },
+    {
+      "section": "References",
+      "description": "The standards or projects the package depends on or relates to.",
+      "examples": [
+        "- [JSON Schema specification](https://json-schema.org/specification) - Dependency: the standard the functions implement"
+      ]
+    }
+  ]
+}

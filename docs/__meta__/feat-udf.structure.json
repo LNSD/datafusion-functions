@@ -1,0 +1,79 @@
+{
+  "description": "Machine-checkable rules from feat-udf.md for docs/feat/udf-*.md. feat.structure.json still applies; this file requires the crate field, pins the frontmatter values, adds Signature and Semantics after Summary and Use Cases after Limitations, and makes Usage and References required.",
+  "frontmatter": {
+    "type": "object",
+    "required": [
+      "crate"
+    ],
+    "properties": {
+      "name": {
+        "type": "string",
+        "pattern": "^udf-[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "crate": {
+        "type": "string",
+        "pattern": "^datafusion-functions-[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "type": {
+        "const": "feature"
+      },
+      "components": {
+        "type": "string",
+        "pattern": "(?:^|,)crate:datafusion-functions-[a-z0-9]+(?:-[a-z0-9]+)*(?:,|$)"
+      }
+    }
+  },
+  "outline": [
+    {
+      "section": "Summary",
+      "description": "What the function computes and when to call it.",
+      "examples": [
+        "`jsonschema_valid(instance, schema)` tells whether JSON text conforms to a JSON Schema."
+      ]
+    },
+    {
+      "section": "Signature",
+      "words": 150,
+      "description": "The call form and result type in a sql block, then one table row per argument: name, accepted Arrow types, literal or column.",
+      "examples": [
+        "```sql\njsonschema_valid(instance, schema) -> Boolean\n```\n\n| Argument | Types | Literal or column |\n|---|---|---|\n| `instance` | `Utf8`, `LargeUtf8`, `Utf8View` | Either |"
+      ]
+    },
+    {
+      "section": "Semantics",
+      "description": "What a call means beyond its types: planning errors, nulls, execution errors, and constant arguments.",
+      "examples": [
+        "- A null instance or schema produces null."
+      ]
+    },
+    {
+      "section": "Usage",
+      "description": "SQL queries calling the function, with any casts their arguments need.",
+      "examples": [
+        "```sql\nSELECT id, jsonschema_valid(body, schema) AS valid FROM requests;\n```"
+      ]
+    },
+    {
+      "section": "Limitations",
+      "optional": true,
+      "description": "The function's known constraints.",
+      "examples": [
+        "- Numbers are compared as `f64`."
+      ]
+    },
+    {
+      "section": "Use Cases",
+      "description": "One H3 per problem the function solves: a brief overview of why it fits, then a SQL query.",
+      "examples": [
+        "### Auditing API Payloads\n\nFind stored request bodies that no longer match the published contract.\n\n```sql\nSELECT id FROM requests WHERE NOT jsonschema_valid(body, schema);\n```"
+      ]
+    },
+    {
+      "section": "References",
+      "description": "The package's feature document as a Dependency, and related functions.",
+      "examples": [
+        "- [datafusion-functions-jsonschema](datafusion-functions-jsonschema.md) - Dependency: registering the package's functions"
+      ]
+    }
+  ]
+}
