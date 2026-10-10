@@ -2,6 +2,10 @@
 //! never the rejected value, so the output cannot leak payload contents.
 
 use std::{
+    fmt::{
+        Display,
+        Write as _,
+    },
     num::NonZeroUsize,
     sync::{
         Arc,
@@ -15,7 +19,7 @@ use datafusion::{
         array::{
             BooleanArray,
             ListArray,
-            StringArray,
+            StringBuilder,
             StructArray,
         },
         buffer::{
@@ -168,9 +172,9 @@ impl ScalarUDFImpl for JsonschemaErrors {
                     break;
                 }
                 reports.push_error(
-                    error.instance_path().to_string(),
-                    error.schema_path().to_string(),
-                    error.kind().keyword().to_owned(),
+                    error.instance_path(),
+                    error.schema_path(),
+                    error.kind().keyword(),
                 );
             }
             reports.finish_row(count > MAX_ERRORS.get());
@@ -207,11 +211,12 @@ fn error_list_field() -> FieldRef {
     ))
 }
 
-/// Accumulates one report per row and assembles them into the returned struct array.
+/// Accumulates one report per row and assembles them into the returned struct array. Error fields are written
+/// straight into Arrow builders, so no `String` is allocated per field.
 struct Reports {
-    instance_paths: Vec<String>,
-    schema_paths: Vec<String>,
-    keywords: Vec<String>,
+    instance_paths: StringBuilder,
+    schema_paths: StringBuilder,
+    keywords: StringBuilder,
     error_counts: Vec<usize>,
     pending_count: usize,
     truncated: Vec<bool>,
@@ -221,9 +226,9 @@ struct Reports {
 impl Reports {
     fn for_rows(rows: usize) -> Self {
         Self {
-            instance_paths: Vec::new(),
-            schema_paths: Vec::new(),
-            keywords: Vec::new(),
+            instance_paths: StringBuilder::new(),
+            schema_paths: StringBuilder::new(),
+            keywords: StringBuilder::new(),
             error_counts: Vec::with_capacity(rows),
             pending_count: 0,
             truncated: Vec::with_capacity(rows),
@@ -231,10 +236,20 @@ impl Reports {
         }
     }
 
-    fn push_error(&mut self, instance_path: String, schema_path: String, keyword: String) {
-        self.instance_paths.push(instance_path);
-        self.schema_paths.push(schema_path);
-        self.keywords.push(keyword);
+    fn push_error(
+        &mut self,
+        instance_path: &impl Display,
+        schema_path: &impl Display,
+        keyword: &str,
+    ) {
+        // A builder collects what is written into the value in progress, and `append_value("")` ends it.
+        write!(self.instance_paths, "{instance_path}")
+            .expect("writing to a string builder cannot fail");
+        self.instance_paths.append_value("");
+        write!(self.schema_paths, "{schema_path}")
+            .expect("writing to a string builder cannot fail");
+        self.schema_paths.append_value("");
+        self.keywords.append_value(keyword);
         self.pending_count += 1;
     }
 
@@ -251,13 +266,13 @@ impl Reports {
         self.valid_rows.push(false);
     }
 
-    fn into_array(self) -> StructArray {
+    fn into_array(mut self) -> StructArray {
         let entries = StructArray::new(
             error_fields(),
             vec![
-                Arc::new(StringArray::from(self.instance_paths)),
-                Arc::new(StringArray::from(self.schema_paths)),
-                Arc::new(StringArray::from(self.keywords)),
+                Arc::new(self.instance_paths.finish()),
+                Arc::new(self.schema_paths.finish()),
+                Arc::new(self.keywords.finish()),
             ],
             None,
         );
