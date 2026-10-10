@@ -36,9 +36,9 @@ use datafusion::{
         Volatility,
     },
 };
-use serde_json::Value;
 
 use crate::{
+    jiter_json,
     schema_argument::SchemaArgument,
     string_argument::StringArgument,
 };
@@ -132,7 +132,7 @@ impl ScalarUDFImpl for JsonschemaValid {
                 continue;
             };
             // An instance that is not JSON cannot be assessed, so it is null rather than false.
-            let Ok(instance) = serde_json::from_str::<Value>(text) else {
+            let Ok(instance) = jiter_json::parse(text) else {
                 results.append_null();
                 continue;
             };

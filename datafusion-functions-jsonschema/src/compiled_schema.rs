@@ -22,6 +22,8 @@ use jsonschema::{
 use lru::LruCache;
 use serde_json::Value;
 
+use crate::jiter_json::Jiter;
+
 /// The number of distinct schemas whose validators stay compiled. A query with a per-row schema column
 /// recompiles a schema only once it has been evicted, least recently used first.
 const CACHE_CAPACITY: NonZeroUsize =
@@ -32,7 +34,7 @@ static CACHE: LazyLock<Mutex<LruCache<String, CompiledSchema>>> =
 
 /// A JSON Schema compiled into a validator. Cloning shares the validator.
 #[derive(Clone)]
-pub(crate) struct CompiledSchema(Arc<Validator>);
+pub(crate) struct CompiledSchema(Arc<Validator<Jiter>>);
 
 impl CompiledSchema {
     /// The compiled form of `text`, from the shared cache, compiling and caching it on a miss.
@@ -51,7 +53,7 @@ impl CompiledSchema {
         Ok(schema)
     }
 
-    pub(crate) fn validator(&self) -> &Validator {
+    pub(crate) fn validator(&self) -> &Validator<Jiter> {
         &self.0
     }
 }
@@ -62,7 +64,7 @@ impl std::str::FromStr for CompiledSchema {
     fn from_str(text: &str) -> Result<Self, SchemaError> {
         let schema: Value =
             serde_json::from_str(text).map_err(|err| SchemaError::NotJson(err.to_string()))?;
-        let validator = jsonschema::options()
+        let validator = jsonschema::options_for::<Jiter>()
             .with_retriever(OfflineRetriever)
             // The linear-time engine rules out catastrophic backtracking on a hostile `pattern`, at the cost
             // of rejecting lookaround and backreferences.

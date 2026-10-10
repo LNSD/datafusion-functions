@@ -7,6 +7,7 @@ use datafusion::{
 };
 
 mod compiled_schema;
+mod jiter_json;
 mod jsonschema_errors;
 mod jsonschema_valid;
 mod schema_argument;
