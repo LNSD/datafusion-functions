@@ -42,10 +42,11 @@ Each argument is read in its own type, without a cast to a common one. The resul
 - `$ref` is never fetched: a reference to a URL or a file is unresolvable, so no query touches the
   network or the filesystem. Local references, such as `#/$defs/item`, resolve.
 - A null instance or schema produces null. An instance that is not JSON, including one nested deeper
-  than 128 levels, also produces null, never false.
+  than 200 levels, also produces null, never false.
 - `pattern` uses a linear-time regular expression engine; a pattern with lookaround or
   backreferences makes the schema invalid.
-- Numbers are compared as `f64`, and a duplicated object key keeps its last value.
+- Numbers are compared as `f64`. A duplicated object key is looked up by its last value, but keywords
+  that count or list members, such as `maxProperties` or `additionalProperties`, see every occurrence.
 
 ## Usage
 
