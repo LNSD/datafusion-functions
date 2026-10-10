@@ -86,6 +86,14 @@ test-doc *EXTRA_FLAGS:
     cargo test --doc --workspace --all-features {{EXTRA_FLAGS}}
 
 
+## Benchmarks
+
+# Run benchmarks (cargo bench --workspace)
+[group: 'bench']
+bench *EXTRA_FLAGS:
+    cargo bench --workspace {{EXTRA_FLAGS}}
+
+
 ## Docs
 
 # Check governed documents and agent skills (lorecraft check)
