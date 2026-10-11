@@ -1,6 +1,8 @@
 //! The schema argument of a JSON Schema UDF. A literal schema is compiled once per batch; a schema column is
 //! compiled per row through the shared cache.
 
+use std::borrow::Cow;
+
 use datafusion::{
     common::{
         DataFusionError,
@@ -42,20 +44,25 @@ impl SchemaArgument {
         }
     }
 
-    /// The compiled schema for `row`, or `None` if the schema is null.
+    /// The compiled schema for `row`, or `None` if the schema is null. A literal schema is borrowed, so the row
+    /// loop pays no reference count update for it; a per-row schema is shared out of the cache.
     ///
     /// # Errors
     ///
     /// Returns an execution error naming the row if a per-row schema does not compile.
-    pub(crate) fn schema(&self, function: &str, row: usize) -> Result<Option<CompiledSchema>> {
+    pub(crate) fn schema(
+        &self,
+        function: &str,
+        row: usize,
+    ) -> Result<Option<Cow<'_, CompiledSchema>>> {
         match self {
-            Self::Constant(schema) => Ok(schema.clone()),
+            Self::Constant(schema) => Ok(schema.as_ref().map(Cow::Borrowed)),
             Self::PerRow(column) => {
                 let Some(text) = column.value(row) else {
                     return Ok(None);
                 };
                 match CompiledSchema::cached(text) {
-                    Ok(schema) => Ok(Some(schema)),
+                    Ok(schema) => Ok(Some(Cow::Owned(schema))),
                     Err(err) => exec_err!("{function}: row {row}: {err}"),
                 }
             }
