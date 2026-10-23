@@ -20,7 +20,7 @@ harness = false
 [dependencies]
 datafusion = { version = "55", default-features = false }
 jiter = "0.17"
-jsonschema = { version = "0.58", default-features = false }
+jsonschema = { version = "0.60", default-features = false }
 lru = "0.18"
 serde_json = "1"
 thiserror = "2"
@@ -28,7 +28,7 @@ thiserror = "2"
 [dev-dependencies]
 codspeed-criterion-compat = "5"
 datafusion = { version = "55", default-features = false, features = ["nested_expressions", "sql"] }
-jsonschema = { version = "0.58", default-features = false, features = ["conformance"] }
+jsonschema = { version = "0.60", default-features = false, features = ["conformance"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 
 [lints.rust]
