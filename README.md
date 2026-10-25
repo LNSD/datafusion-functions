@@ -1,5 +1,10 @@
 <div align="center">
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/LNSD/datafusion-functions/main/docs/assets/logo-dark.png" />
+  <img src="https://raw.githubusercontent.com/LNSD/datafusion-functions/main/docs/assets/logo-light.png" alt="DataFusion Functions" width="120" />
+</picture>
+
 # DataFusion Functions
 
 [Read the Docs](https://github.com/LNSD/datafusion-functions/tree/main/docs) · [Report Bug](https://github.com/LNSD/datafusion-functions/issues/new?labels=bug) · [Request Feature](https://github.com/LNSD/datafusion-functions/issues/new?labels=enhancement)
