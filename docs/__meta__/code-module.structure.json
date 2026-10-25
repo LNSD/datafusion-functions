@@ -1,0 +1,16 @@
+{
+  "description": "Machine-checkable additions from code-module.md for module-scoped code rules.",
+  "frontmatter": {
+    "type": "object",
+    "properties": {
+      "name": { "type": "string", "pattern": "^module-" },
+      "type": { "const": "crate" },
+      "scope": { "type": "string", "pattern": "^crate:[a-z0-9]+(?:-[a-z0-9]+)*$" }
+    }
+  },
+  "outline": [
+    { "section": "Responsibility", "description": "The module's concern and boundary." },
+    { "section": "Dependencies", "description": "Allowed direction of collaboration with sibling modules." },
+    { "any": true }
+  ]
+}
