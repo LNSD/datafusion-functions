@@ -19,7 +19,7 @@ harness = false
 
 [dependencies]
 datafusion = { version = "55", default-features = false }
-jiter = "0.17"
+jiter = "0.18"
 jsonschema = { version = "0.58", default-features = false }
 lru = "0.18"
 serde_json = "1"
