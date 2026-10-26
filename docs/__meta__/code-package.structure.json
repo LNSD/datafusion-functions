@@ -1,0 +1,17 @@
+{
+  "description": "Machine-checkable additions from code-package.md for package-scoped code rules.",
+  "frontmatter": {
+    "type": "object",
+    "properties": {
+      "name": { "type": "string", "pattern": "^package-" },
+      "type": { "const": "crate" },
+      "scope": { "type": "string", "pattern": "^crate:[a-z0-9]+(?:-[a-z0-9]+)*$" }
+    }
+  },
+  "outline": [
+    { "section": "Responsibility", "description": "The package's purpose and boundaries." },
+    { "section": "Layout", "description": "Crate-root modules and the responsibilities they own." },
+    { "section": "Public Surface", "description": "Exported modules, functions, types, and registration entry points." },
+    { "any": true }
+  ]
+}
