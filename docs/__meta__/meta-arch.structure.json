@@ -1,0 +1,9 @@
+{
+  "description": "Rules for arch.md and arch-*.md in docs/__meta__. The prose authority is docs/__meta__/meta-arch.md.",
+  "frontmatter": {
+    "type": "object",
+    "properties": {
+      "name": { "pattern": "^arch(?:-[a-z0-9]+)*$" }
+    }
+  }
+}
