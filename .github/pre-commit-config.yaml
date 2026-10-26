@@ -42,3 +42,8 @@ repos:
         files: '^(docs/|\.agents/skills/|AGENTS\.md$|CLAUDE\.md$)'
         language: system
         pass_filenames: false
+      - id: check-commit-msg
+        name: Check the commit message
+        entry: gitlint --config .github/gitlint --staged --msg-filename
+        language: system
+        stages: [commit-msg]
