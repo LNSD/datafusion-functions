@@ -45,8 +45,8 @@
       },
       "scope": {
         "type": "string",
-        "pattern": "^(?:global|crate:[a-z0-9]+(?:-[a-z0-9]+)*)$",
-        "description": "global, or crate:<package-name> from this workspace."
+        "pattern": "^(?:global|project|crate:[a-z0-9]+(?:-[a-z0-9]+)*)$",
+        "description": "global, project, or crate:<package-name> from this workspace."
       }
     }
   },
