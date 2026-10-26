@@ -23,7 +23,7 @@ Every document begins with YAML frontmatter containing exactly four required str
 - `name`: lowercase kebab-case, matching the filename without `.md`.
 - `description`: a nonempty description with a `Load when` trigger and no trailing period.
 - `type`: one of `principle`, `core`, `arch`, `crate`, or `meta`.
-- `scope`: `global` or `crate:<package-name>`, with a lowercase kebab-case package name.
+- `scope`: `global`, `project`, or `crate:<package-name>`, with a lowercase kebab-case package name. Use `global` for conventions that apply across languages or tools; use `project` for conventions specific to this repository; use `crate:<package-name>` for conventions owned by one workspace package.
 
 Quote the values. `principle` describes a design principle, `core` a coding convention, `arch`
 workspace structure, and `crate` a package convention. `meta` is reserved for format specifications.
