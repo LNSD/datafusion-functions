@@ -148,6 +148,16 @@ WHERE NOT jsonschema_valid(value, schema);
 
 ## References
 
+- [prd-001](../arch/prd-001-jsonschema-validation.md) - Source: Product requirements for JSON Schema validation
+- [adr-002](../arch/adr-002-jsonschema-library.md) - Source: jsonschema crate and supported drafts
+- [adr-003](../arch/adr-003-jsonschema-null-semantics.md) - Source: Null semantics for unassessable inputs
+- [adr-004](../arch/adr-004-schema-planning-vs-execution.md) - Source: Planning vs execution failure reporting
+- [adr-005](../arch/adr-005-schema-compilation-cache.md) - Source: Lending literal schemas and caching column schemas
+- [adr-006](../arch/adr-006-instance-parsing-jiter.md) - Source: Parsing instances with jiter
+- [adr-007](../arch/adr-007-no-network-filesystem-ref.md) - Source: Local reference resolution without network access
+- [adr-008](../arch/adr-008-error-report-shape.md) - Source: Error report shape and privacy guarantees
+- [adr-009](../arch/adr-009-linear-time-regex-pattern.md) - Source: Linear-time regex evaluation for pattern
+- [adr-010](../arch/adr-010-string-argument-types.md) - Source: Support for Utf8, LargeUtf8, and Utf8View
 - [datafusion-functions-jsonschema](datafusion-functions-jsonschema.md) - Dependency: registering the package's functions
 - [udf-jsonschema-valid](udf-jsonschema-valid.md) - Related: whether an instance conforms, and the shared schema rules
 - [JSON Pointer, RFC 6901](https://www.rfc-editor.org/rfc/rfc6901) - Dependency: the path format
