@@ -38,3 +38,5 @@ If an instance is `NULL`, or if it is unparseable malformed text rather than val
 ## References
 
 - [prd-001](prd-001-jsonschema-validation.md) - Source: Product requirements for JSON Schema validation
+
+- [adr-012](adr-012-shell-command-parser.md) - Precedent for: Null semantics for unassessable inputs in shell UDFs
