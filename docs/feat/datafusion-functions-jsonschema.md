@@ -56,5 +56,6 @@ The DataFrame API builds the same calls with `datafusion_functions_jsonschema::f
 
 ## References
 
+- [prd-001](../arch/prd-001-jsonschema-validation.md) - Source: Product requirements for JSON Schema validation
 - [JSON Schema specification](https://json-schema.org/specification) - Dependency: the standard the functions implement
 - [datafusion-functions-json](https://github.com/datafusion-contrib/datafusion-functions-json) - Related: extracting values from JSON text, such as a nested document to validate with `json_get_json`
