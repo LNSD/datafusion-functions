@@ -54,6 +54,11 @@ ls docs/__meta__/*.md
 rg --max-count 2 '^(name|description):' docs/__meta__/*.md   # where specifications carry frontmatter
 ```
 
+A feature doc in `docs/feat/` is only for behavior a user can invoke or observe; internal architecture,
+libraries and design decisions belong in `docs/code/` or `docs/arch/`, not in `docs/feat/`.
+Pre-implementation designs and product requirements belong in `docs/arch/prd-*.md`, while architecture
+decisions and design records belong in `docs/arch/adr-*.md`.
+
 If none fits, the document probably belongs outside every corpus, at the `docs/` root, where no check reads it.
 If it needs a corpus that does not exist yet, that is a new specification: use `/docs-rules-creator` first.
 

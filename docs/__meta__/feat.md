@@ -203,11 +203,19 @@ namespace layer names the sections its documents add and fixes their place.
 
 ### References
 
-One link per line, the relationship named first: `Dependency`, `Alternative`, `Related`, `Extended by`, or
-`Base`. A document's **base** is the document whose name is the longest hyphen-delimited prefix of its own.
+One link per line, the relationship named first: `Dependency`, `Alternative`, `Related`, `Extended by`,
+`Base`, or `Source`. A document's **base** is the document whose name is the longest hyphen-delimited prefix of its own.
 Every document except the top of a domain links up to its base; no document links down to its extensions,
 except that a component may link to the components it contains. References name dependencies, never an
 inventory of neighboring files.
+
+`Source` names a PRD or an ADR in `docs/arch/` that the feature comes from (for example,
+`[prd-001](../arch/prd-001-shell-udfs.md) - Source: requirements for shell command UDFs`). The link goes one way:
+no architecture document links a feat doc, so a feat doc never expects one to name it back. What the feat doc
+describes is what shipped; the PRD and ADRs record what was required and decided before it did.
+
+**No feat doc cites an issue or a pull request**, under References or inline, by link or by number. An issue
+tracks the work and a pull request lands it; only the document is meant to last.
 
 ---
 
@@ -287,6 +295,9 @@ components: "{{prefix:name - use crate:, module:, skill:, or spec:}}"
 - [ ] **If type=meta**: no Usage and no Code References section
 - [ ] Added sections sit directly after the opening sections or after Limitations, as the namespace fixes
 - [ ] References and Code References, when present, close the document in that order
+- [ ] References use the defined relationship types (`Dependency`, `Alternative`, `Related`, `Extended by`, `Base`, `Source`)
+- [ ] A `Source` entry links a PRD or an ADR in `docs/arch/`, and no other relationship does
+- [ ] The document cites no issue or pull request, in the References section or inline
 - [ ] References name the relationship, link up to the base, and never down to an extension
 - [ ] Every behavior documented exists today; the document has one subject and restates no sibling
 - [ ] No development workflow, dependency version, release status, or benchmark figure appears

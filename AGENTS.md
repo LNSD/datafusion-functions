@@ -25,7 +25,8 @@ implementation in documentation. Add behavior and its documentation together.
 
 ## Documentation and Skills
 
-`docs/__meta__/` holds the format specifications for feature documentation and code rules.
+`docs/__meta__/` holds the format specifications for architecture documents, feature documentation, and code rules.
+Architecture documents belong in `docs/arch/` (PRDs and ADRs, numbered in a shared sequence).
 Feature documents belong in `docs/feat/` and describe implemented behavior. Code rules belong in
 `docs/code/` and are binding when present. Do not invent rules from an absent corpus.
 
