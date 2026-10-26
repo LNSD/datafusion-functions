@@ -1,0 +1,20 @@
+{
+  "description": "Machine-checkable rules from code-datafusion-udfs.md for generic DataFusion UDF rule documents. code.structure.json still applies and decides how the document closes.",
+  "frontmatter": {
+    "type": "object",
+    "properties": {
+      "name": { "type": "string", "pattern": "^datafusion-udfs-" },
+      "type": { "const": "core" },
+      "scope": { "const": "global" }
+    }
+  },
+  "outline": [
+    { "section": "Rule", "description": "The recommendation and when it applies." },
+    { "section": "Examples", "optional": true, "description": "Invented, minimal examples independent of project implementation." },
+    { "section": "Why It Matters", "description": "The reason for the recommendation and its consequences." },
+    { "section": "Pragmatism Caveat", "optional": true, "description": "Limits or cases where the recommendation does not apply." },
+    { "section": "Checklist" },
+    { "section": "References", "optional": true },
+    { "section": "External References", "optional": true }
+  ]
+}
