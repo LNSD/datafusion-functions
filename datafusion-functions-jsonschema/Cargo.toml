@@ -18,7 +18,7 @@ name = "main"
 harness = false
 
 [dependencies]
-datafusion = { version = "55", default-features = false }
+datafusion = { version = "56", default-features = false }
 jiter = "0.18"
 jsonschema = { version = "0.60", default-features = false }
 lru = "0.19"
@@ -27,7 +27,7 @@ thiserror = "2"
 
 [dev-dependencies]
 codspeed-criterion-compat = "6"
-datafusion = { version = "55", default-features = false, features = ["nested_expressions", "sql"] }
+datafusion = { version = "56", default-features = false, features = ["nested_expressions", "sql"] }
 jsonschema = { version = "0.60", default-features = false, features = ["conformance"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 
